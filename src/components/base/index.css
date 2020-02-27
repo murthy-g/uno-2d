@@ -1,0 +1,20 @@
+div {
+  margin: 3px;
+  display: inline-block;
+}
+
+.sprite {
+  width: 18px;
+  height: 24px;
+  background: url(../../assets/uno.png) 0 0 no-repeat;
+  background-size: 1400% 800%;
+}
+.zero {
+  background-position: 0% 0%;
+}
+.one {
+    background-position: 8% 0%;
+}
+.two {
+    background-position: 16% 0%;
+}
