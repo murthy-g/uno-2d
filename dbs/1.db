@@ -1,0 +1,5 @@
+use uno;
+
+db.createCollection("ping", {capped: true, size: 2048, max: 4000})
+db.ping.insert({"ping":"pong"})
+db.ping.find()
