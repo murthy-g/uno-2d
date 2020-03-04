@@ -1,0 +1,26 @@
+.playable-region {
+  margin: 10px 20px;
+  display: inline-block;
+  border: 1px solid lightgrey;
+  padding: 10px;
+  background-color: lightblue;
+  width: 250px;
+  height: 500px;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: center;
+  margin: 8px;
+  border: 1px solid red;
+}
+
+.card {
+  background-color: black;
+  color: white;
+  display: inline-block;
+  margin: 8px;
+  width: 50px;
+  height: 75px;
+  border-radius: 5px;
+}
