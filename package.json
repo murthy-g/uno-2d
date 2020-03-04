@@ -10,6 +10,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "http-proxy-middleware": "^1.0.1",
+    "react-beautiful-dnd": "^13.0.0",
     "mongodb": "^3.5.4",
     "mongoose": "^5.9.2",
     "node-sass": "^4.13.1",
@@ -41,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "prettier": {
+    "printWidth": 100
   }
 }
