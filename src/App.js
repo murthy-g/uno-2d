@@ -1,19 +1,33 @@
-import React from 'react';
-import './App.css';
-import BaseScene from './components/base';
-import io from 'socket.io-client';
+import React from "react";
+import "./App.css";
+import EntryFile from "./components/entry";
+import { SocketContext } from "./shared/context/socket";
 
 class App extends React.Component {
-  constructor() {
-    super();
-    this.socket = io("http://localhost:2020");
+  constructor(props) {
+    super(props);
+    this.props = props;
+    this.state = {
+      socket: null
+    };
   }
+  componentDidMount() {
+    this.setState({
+      socket: this.props.io
+    });
+  }
+  
   render() {
     return (
-      <div className="App">
-        <BaseScene />
-      </div>
+      <SocketContext.Provider socket={this.state.socket}>
+        <div className="App">
+          <EntryFile />
+        </div>
+      </SocketContext.Provider>
     );
   }
 }
+
+App.contextType = SocketContext;
+
 export default App;

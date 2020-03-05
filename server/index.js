@@ -1,20 +1,28 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
-var bodyParser = require('body-parser');
-const routes = require('./api');
-const connect = require('./components/connect');
+var app = require("express")();
+var http = require("http").createServer(app);
+var io = require("socket.io")(http);
+var bodyParser = require("body-parser");
+const routes = require("./api");
+const connect = require("./components/connect");
 
-app.set('json spaces', 2);
-app.use(bodyParser.urlencoded({extended: false}));
-app.use('/api', routes);
+app.set("json spaces", 2);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/api", routes);
 
-connect.init()
+connect.init();
 
-io.on('connection', function(socket) {
-  console.log('a user connected');
+io.on("connection", function(socket) {
+  // console.log('a user connected');
+  // socket.on('disconnect', function(){
+  //   console.log('user disconnected');
+  // });
+
+  //connected user
+  socket.on("user", function(e) {
+    console.log(e.current.value + " user connected");
+  });
 });
 
 http.listen(2020, function() {
-  console.log('listening on *:2020');
+  console.log("listening on *:2020");
 });

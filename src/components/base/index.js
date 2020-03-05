@@ -1,6 +1,5 @@
 import React, { createRef } from "react";
 import "./index.css";
-import * as uuid from "uuid";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import { Card, CardContainer } from "../card";
