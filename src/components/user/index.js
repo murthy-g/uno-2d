@@ -19,7 +19,6 @@ const style = {
     position: "absolute"
   },
   button: {
-    margin: "auto",
     width: "21%",
     top: "50%",
     left: "40%",
@@ -33,7 +32,7 @@ const style = {
   }
 };
 const User = props => {
-  console.log(props);
+  // console.log(props);
   const inputEl = useRef(null);
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -41,10 +40,9 @@ const User = props => {
   });
   function handleFocus() {
     setUser(inputEl.current.value);
-    console.group(props);
-    // if (inputEl.current.value.length > 0) {
-    //   props.socket.emit("user", inputEl.current.value);
-    // }
+    if (inputEl.current.value.length > 0) {
+      props.socket.emit("user", inputEl.current.value);
+    }
   }
   return (
     <div style={style.depth}>

@@ -4,8 +4,9 @@ import BaseScene from "../base";
 import { SocketContext } from "../../shared/context/socket";
 
 export default class EntryFile extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.props = props;
     this.state = {
       user: undefined
     };
@@ -20,15 +21,15 @@ export default class EntryFile extends Component {
   }
   render() {
     return (
-      <SocketContext.Consumer>
-        {socket =>
-          !this.state.user ? (
-            <User user={e => this.setUser(e)} socket={socket} />
-          ) : (
-            <BaseScene socket={socket} />
-          )
-        }
-      </SocketContext.Consumer>
+      // <SocketContext.Consumer>
+      //   {socket =>
+      !this.state.user ? (
+        <User user={e => this.setUser(e)} socket={this.props.socket} />
+      ) : (
+        <BaseScene socket={this.props.socket} />
+      )
+      //   }
+      // </SocketContext.Consumer>
     );
   }
 }

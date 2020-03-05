@@ -18,8 +18,9 @@ io.on("connection", function(socket) {
   // });
 
   //connected user
-  socket.on("user", function(e) {
-    console.log(e.current.value + " user connected");
+  socket.on("user", function(msg) {
+    console.log('here');
+    console.log(msg + " user connected");
   });
 });
 
