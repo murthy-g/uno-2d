@@ -1,6 +1,7 @@
 .card-container {
   display: flex;
   justify-content: center;
+  flex-flow: row wrap;
   padding: 10px;
-  border: 1px solid lightgrey;
+  // border: 1px solid lightgrey;
 }
