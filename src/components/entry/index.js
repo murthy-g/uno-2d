@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import User from "../user";
-import BaseScene from "../base";
+import BaseScene from "../base/Base";
 import { SocketContext } from "../../shared/context/socket";
 
 export default class EntryFile extends Component {

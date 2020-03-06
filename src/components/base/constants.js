@@ -1,4 +1,69 @@
-const coordinates = [
+const NUM_OF_UNO_CARDS = 60;
+
+const ALL_CARD_NAMES = [
+  "green-0",
+  "green-1",
+  "green-2",
+  "green-3",
+  "green-4",
+  "green-5",
+  "green-6",
+  "green-7",
+  "green-8",
+  "green-9",
+  "green-draw-2",
+  "green-skip",
+  "green-reverse",
+  "draw-4",
+  "wild",
+  "blue-0",
+  "blue-1",
+  "blue-2",
+  "blue-3",
+  "blue-4",
+  "blue-5",
+  "blue-6",
+  "blue-7",
+  "blue-8",
+  "blue-9",
+  "blue-draw-2",
+  "blue-skip",
+  "blue-reverse",
+  // "draw-4",
+  // "wild",
+  "red-0",
+  "red-1",
+  "red-2",
+  "red-3",
+  "red-4",
+  "red-5",
+  "red-6",
+  "red-7",
+  "red-8",
+  "red-9",
+  "red-draw-2",
+  "red-skip",
+  "red-reverse",
+  // "draw-4",
+  // "wild",
+  "yellow-0",
+  "yellow-1",
+  "yellow-2",
+  "yellow-3",
+  "yellow-4",
+  "yellow-5",
+  "yellow-6",
+  "yellow-7",
+  "yellow-8",
+  "yellow-9",
+  "yellow-draw-2",
+  "yellow-skip",
+  "yellow-reverse"
+  // "draw-4",
+  // "wild"
+];
+
+const COORDINATES = [
   { x: 0, y: 0 },
   { x: 1, y: 0 },
   { x: 2, y: 0 },
@@ -61,4 +126,4 @@ const coordinates = [
   { x: 14, y: 3 }
 ];
 
-export default coordinates;
+export { NUM_OF_UNO_CARDS, ALL_CARD_NAMES, COORDINATES };
