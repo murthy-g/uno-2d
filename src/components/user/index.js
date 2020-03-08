@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import * as socketIO from "../../shared/context/socket";
 
 const style = {
   depth: {
@@ -33,23 +34,48 @@ const style = {
 };
 const User = props => {
   // console.log(props);
-  const inputEl = useRef(null);
+  const userInput = useRef(null);
+  const roomInput = useRef(null);
   const [user, setUser] = useState(null);
+  const [adminUser, setAdminUser] = useState(null);
+  const [room, setRoom] = useState(null);
   useEffect(() => {
     props.user(user);
   });
   function handleFocus() {
-    setUser(inputEl.current.value);
-    if (inputEl.current.value.length > 0) {
-      props.socket.emit("user", inputEl.current.value);
+    setUser(userInput.current.value);
+    if (userInput.current.value.length > 0) {
+      socketIO.emit("user", userInput.current.value);
     }
+  }
+  function handleAdminUser() {
+    setAdminUser(userInput.current.value);
+    socketIO.receive(userInput.current.value);
+    if (userInput.current.value.length > 0) {
+      socketIO.emit("adminUser", userInput.current.value);
+    }
+  }
+  function handleRoomFocus() {
+    setRoom(roomInput.current.value);
+    socketIO.emit("create", roomInput.current.value);
   }
   return (
     <div style={style.depth}>
-      Enter your userName: <input type="text" ref={inputEl} placeholder="name" />
+      Enter your userName: <input type="text" ref={userInput} placeholder="name" />
       <button onClick={handleFocus} style={style.button}>
-        Enter
+        User
       </button>
+      <button onClick={handleAdminUser} style={style.button}>
+        Admin
+      </button>
+      {adminUser && adminUser.length > 0 && (
+        <>
+          <label>Enter Room Name:</label> <input type="text" ref={roomInput} placeholder="room" />
+          <button onClick={handleRoomFocus} style={style.button}>
+            Login
+          </button>
+        </>
+      )}
     </div>
   );
 };

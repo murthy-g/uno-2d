@@ -10,17 +10,59 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api", routes);
 
 connect.init();
-
-io.on("connection", function(socket) {
-  // console.log('a user connected');
-  // socket.on('disconnect', function(){
-  //   console.log('user disconnected');
-  // });
-
-  //connected user
-  socket.on("user", function(msg) {
-    console.log('here');
-    console.log(msg + " user connected");
+let adminUser = [];
+let usr = {
+  user: null,
+  roomName: null,
+  socketId: null
+};
+let users = [];
+io.on("connect", function(socket) {
+  socket.on("create", function(room) {
+    socket.join(room);
+    io.in(room).clients((err, client) => {
+      adminUser.forEach(usr => {
+        if (usr.socketId === client[0]) {
+          usr.roomName = room;
+        }
+      });
+      users.forEach(usr => {
+        if (usr.socketId === client) {
+          usr.roomName = room;
+        }
+      });
+      console.log(room + " has been created and user " + io.nsps["/"].adapter.rooms[room]);
+      io.sockets.in(room).emit("room", room);
+    });
+  });
+  socket.on("user", function(user) {
+    usr = {
+      user: user,
+      roomName: null,
+      socketId: socket.id
+    };
+    if (users.indexOf({ user: usr.user }) === -1) {
+      users.push(usr);
+      console.log(user + " user connected");
+    } else {
+      io.sockets.connected[usr.user].emit(user + " already exists");
+      console.log(user + " : duplicate user entered.");
+    }
+  });
+  socket.on("adminUser", function(user) {
+    usr = {
+      user: user,
+      roomName: null,
+      socketId: socket.id
+    };
+    if (adminUser.indexOf({ user: usr.user }) === -1) {
+      adminUser.push(usr);
+      console.log(user + " user connected");
+    } else {
+      console.log(io.sockets);
+      io.sockets.connected[usr.user].emit(user + ": only one admin is allowed.");
+      console.log(user + " admin user tried to connect. but another admin user connected");
+    }
   });
 });
 
