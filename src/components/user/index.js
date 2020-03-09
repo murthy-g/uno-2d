@@ -58,13 +58,14 @@ const User = props => {
   function handleRoomFocus() {
     setRoom(roomInput.current.value);
     socketIO.emit("create", roomInput.current.value);
+    socketIO.receive("room").then(msg => {
+      socketIO.emit('selectRoom', msg.room); // TO DO
+    });
   }
   return (
     <div style={style.depth}>
       Enter your userName: <input type="text" ref={userInput} placeholder="name" />
-      <button onClick={handleFocus} style={style.button}>
-        User
-      </button>
+      <button onClick={handleFocus}>User</button>
       <button onClick={handleAdminUser} style={style.button}>
         Admin
       </button>

@@ -31,8 +31,10 @@ io.on("connect", function(socket) {
           usr.roomName = room;
         }
       });
-      console.log(room + " has been created and user " + io.nsps["/"].adapter.rooms[room]);
-      io.sockets.in(room).emit("room", room);
+      console.log(room + " has been created by the user " + usr.user);
+      socket.emit("room", usr);
+      // console.log(room + " has been created and user " + io.nsps["/"].adapter.rooms[room]);
+      // io.sockets.in(room).emit("room", usr);
     });
   });
   socket.on("user", function(user) {
