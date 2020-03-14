@@ -1,36 +1,24 @@
 import React from "react";
-import "./App.css";
-// import io from "socket.io-client";
-import EntryFile from "./components/entry";
-// import { SocketContext } from "./shared/context/socket";
-
-// const socketIO = io("http://localhost:2020");
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { LandingPage, UserLoginPage, JoinCreateRoomPage } from "./components/pages";
+import "./App.scss";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
-    // this.state = {
-    //   socket: socketIO.io
-    // };
   }
-  // componentDidMount() {
-  //   this.setState({
-  //     socket: socketIO.io
-  //   });
-  // }
 
   render() {
     return (
-      // <SocketContext.Provider socket={this.state.socket}>
-      <div className="App">
-        <EntryFile />
-      </div>
-      // </SocketContext.Provider>
+      <Router>
+        <div className="container">
+          <Route exact path="/" component={LandingPage} />
+          <Route path="/rooms" component={JoinCreateRoomPage} />
+        </div>
+      </Router>
     );
   }
 }
-
-// App.contextType = SocketContext;
 
 export default App;

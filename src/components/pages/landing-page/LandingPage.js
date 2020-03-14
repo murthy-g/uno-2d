@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import User from "../user";
-import BaseScene from "../base/Base";
+import UserLoginPage from "../user-login-page/UserLoginPage";
+import BaseScene from "../../base/Base";
 // import { SocketContext } from "../../shared/context/socket";
 
-export default class EntryFile extends Component {
+class LandingPage extends Component {
   constructor(props) {
     super(props);
     this.props = props;
@@ -23,9 +23,11 @@ export default class EntryFile extends Component {
     return (
       // <SocketContext.Consumer>
       //   {socket =>
-      !this.state.user ? <User user={e => this.setUser(e)} /> : <BaseScene />
+      !this.state.user ? <UserLoginPage user={e => this.setUser(e)} /> : <BaseScene />
       //   }
       // </SocketContext.Consumer>
     );
   }
 }
+
+export default LandingPage;
