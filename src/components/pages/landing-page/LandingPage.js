@@ -1,33 +1,31 @@
-import React, { Component } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import JoinCreateRoomPage from "../join-create-room-page/JoinCreateRoomPage";
 import UserLoginPage from "../user-login-page/UserLoginPage";
-import BaseScene from "../../base/Base";
-// import { SocketContext } from "../../shared/context/socket";
+import SocketContext from "../../../shared/context/SocketContext";
 
-class LandingPage extends Component {
-  constructor(props) {
-    super(props);
-    this.props = props;
-    this.state = {
-      user: undefined
-    };
-  }
+const LandingPage = () => {
+  const socket = useContext(SocketContext);
+  const [username, setUsername] = useState(null);
+  const [users, setUsers] = useState([]);
 
-  setUser(name) {
-    if (name && name.length > 0) {
-      this.setState({
-        user: name
-      });
-    }
-  }
-  render() {
-    return (
-      // <SocketContext.Consumer>
-      //   {socket =>
-      !this.state.user ? <UserLoginPage user={e => this.setUser(e)} /> : <BaseScene />
-      //   }
-      // </SocketContext.Consumer>
-    );
-  }
-}
+  useEffect(() => {
+    socket.on("connectedUsers", data => {
+      setUsers(data);
+    });
+  }, [socket, users]);
+
+  return (
+    <>
+      {!username && (
+        <UserLoginPage
+          submitUsername={name => {
+            setUsername(name);
+          }}
+        />
+      )}
+      {username && <JoinCreateRoomPage users={users} />}
+    </>
+  );
+};
 
 export default LandingPage;

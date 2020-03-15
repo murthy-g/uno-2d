@@ -1,5 +1,13 @@
 import React from "react";
 
-const JoinCreateRoomPage = () => <div>This is the join or create a room page</div>;
+const JoinCreateRoomPage = ({ users }) => {
+  return (
+    <div>
+      {users.map(user => (
+        <div>{user.name} is connected</div>
+      ))}
+    </div>
+  );
+};
 
 export default JoinCreateRoomPage;
