@@ -63,7 +63,7 @@ io.on("connection", function(socket) {
     if (user.name && users.findIndex(item => item.name === user.name) !== -1) {
       const index = users.findIndex(item => item.name === user.name);
       users.splice(index, 1);
-      io.sockets.emit("serverUsers", users);
+      io.sockets.emit("connectedUsers", users);
       console.log(user.name + " disconnected...");
     }
   });
