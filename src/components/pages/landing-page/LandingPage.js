@@ -8,8 +8,9 @@ const LandingPage = () => {
   const [username, setUsername] = useState(null);
   const [users, setUsers] = useState([]);
 
+  // Could move this listener to the JoinCreateRoomPage
   useEffect(() => {
-    socket.on("connectedUsers", data => {
+    socket.on("connected_users", data => {
       setUsers(data);
     });
   }, [socket, users]);

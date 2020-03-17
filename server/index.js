@@ -39,7 +39,7 @@ io.on("connection", function(socket) {
   //   });
   // });
 
-  socket.on("addUser", function(username) {
+  socket.on("add_user", function(username) {
     user = {
       name: username,
       room: null,
@@ -47,11 +47,16 @@ io.on("connection", function(socket) {
     };
     if (users.findIndex(item => item.name === username) === -1) {
       users.push(user);
-      io.sockets.emit("connectedUsers", users);
+      socket.emit("add_user_response", { status: "success", data: { user: user } });
+      io.sockets.emit("connected_users", users);
       console.log(username + " connected");
     } else {
-      io.sockets.connected[user.name].emit(username + " already exists");
-      console.log(username + " : duplicate user entered.");
+      socket.emit("add_user_response", {
+        status: "error",
+        data: { message: "Username already in use." }
+      });
+      // io.sockets.connected[user.name].emit(username + " already exists");
+      console.log(username + " : duplicate user entered");
     }
   });
 
@@ -63,7 +68,7 @@ io.on("connection", function(socket) {
     if (user.name && users.findIndex(item => item.name === user.name) !== -1) {
       const index = users.findIndex(item => item.name === user.name);
       users.splice(index, 1);
-      io.sockets.emit("connectedUsers", users);
+      io.sockets.emit("connected_users", users);
       console.log(user.name + " disconnected...");
     }
   });

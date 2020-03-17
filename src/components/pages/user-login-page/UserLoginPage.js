@@ -1,14 +1,32 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import SocketContext from "../../../shared/context/SocketContext";
 
 const UserLoginPage = ({ submitUsername }) => {
   const socket = useContext(SocketContext);
   const [username, setUsername] = useState("");
+  const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    socket.on("add_user_response", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          const { user } = data;
+          submitUsername(user);
+          break;
+        case "error":
+          const { message } = data;
+          setAlert(message);
+          break;
+        default:
+          setAlert("Error logging in. Please try again.");
+      }
+    });
+  }, [socket]);
 
   const validateUsername = e => {
+    // CLIENT SIDE validation
     if (username) {
-      submitUsername(username);
-      socket.emit("addUser", username);
+      socket.emit("add_user", username);
     }
   };
 
@@ -35,6 +53,11 @@ const UserLoginPage = ({ submitUsername }) => {
             </button>
           </div>
         </div>
+        {alert && (
+          <div className="alert alert-danger" role="alert">
+            {alert}
+          </div>
+        )}
       </div>
     </div>
   );
