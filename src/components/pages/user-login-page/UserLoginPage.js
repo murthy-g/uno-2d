@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import SocketContext from "../../../shared/context/SocketContext";
 
-const UserLoginPage = ({ submitUsername }) => {
+const UserLoginPage = ({ onGo }) => {
   const socket = useContext(SocketContext);
   const [username, setUsername] = useState("");
   const [alert, setAlert] = useState(null);
@@ -11,7 +11,7 @@ const UserLoginPage = ({ submitUsername }) => {
       switch (status) {
         case "success":
           const { user } = data;
-          submitUsername(user);
+          onGo(user);
           break;
         case "error":
           const { message } = data;
@@ -27,6 +27,8 @@ const UserLoginPage = ({ submitUsername }) => {
     // CLIENT SIDE validation
     if (username) {
       socket.emit("add_user", username);
+    } else {
+      setAlert("Please enter a valid username.");
     }
   };
 

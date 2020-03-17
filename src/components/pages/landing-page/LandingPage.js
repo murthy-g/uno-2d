@@ -19,7 +19,7 @@ const LandingPage = () => {
     <>
       {!username && (
         <UserLoginPage
-          submitUsername={name => {
+          onGo={name => {
             setUsername(name);
           }}
         />
