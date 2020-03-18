@@ -1,8 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import SocketContext from "../../../shared/context/SocketContext";
 
 const JoinCreateRoomPage = ({ rooms, users }) => {
   const socket = useContext(SocketContext);
+  const history = useHistory();
   const [roomInput, setRoomInput] = useState("");
   const [roomAlert, setRoomAlert] = useState(false);
 
@@ -23,8 +25,10 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
     });
   });
 
-  const joinRoom = id => {
+  const joinRoom = (id, name) => {
     socket.emit("join_room", id);
+    // TODO: handle error
+    history.push({ pathname: "/room", search: "?id=" + id, state: { roomName: name } });
   };
 
   const createRoom = () => {
@@ -42,8 +46,8 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
           <button
             type="button"
             className="list-group-item list-group-item-action"
-            id={room.name}
-            onClick={() => joinRoom(room.name)}
+            id={room.id}
+            onClick={() => joinRoom(room.id, room.name)}
           >
             {room.name}
           </button>
