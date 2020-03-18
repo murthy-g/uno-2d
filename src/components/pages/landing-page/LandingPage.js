@@ -7,13 +7,18 @@ const LandingPage = () => {
   const socket = useContext(SocketContext);
   const [username, setUsername] = useState(null);
   const [users, setUsers] = useState([]);
+  const [rooms, setRooms] = useState([]);
 
-  // Could move this listener to the JoinCreateRoomPage
   useEffect(() => {
     socket.on("connected_users", data => {
       setUsers(data);
     });
-  }, [socket, users]);
+
+    socket.on("all_rooms", ({ status, data }) => {
+      const { rooms } = data;
+      setRooms(rooms);
+    });
+  }, [socket, users, rooms]);
 
   return (
     <>
@@ -24,7 +29,7 @@ const LandingPage = () => {
           }}
         />
       )}
-      {username && <JoinCreateRoomPage users={users} />}
+      {username && <JoinCreateRoomPage users={users} rooms={rooms} />}
     </>
   );
 };

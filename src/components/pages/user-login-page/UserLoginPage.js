@@ -4,7 +4,7 @@ import SocketContext from "../../../shared/context/SocketContext";
 const UserLoginPage = ({ onGo }) => {
   const socket = useContext(SocketContext);
   const [username, setUsername] = useState("");
-  const [alert, setAlert] = useState(null);
+  const [alert, setAlert] = useState(false);
 
   useEffect(() => {
     socket.on("add_user_response", ({ status, data }) => {

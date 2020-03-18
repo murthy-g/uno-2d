@@ -13,6 +13,7 @@ app.use("/api", routes);
 // let adminUser = [];
 
 let users = [];
+let rooms = [];
 io.on("connection", function(socket) {
   let user = {
     name: null,
@@ -39,16 +40,39 @@ io.on("connection", function(socket) {
   //   });
   // });
 
+  // TODO: identify rooms by a unique ID rather than name
+  socket.on("join_room", function(roomId) {
+    socket.join(roomId);
+    console.log(user.name + " successfully joined room: " + roomId);
+  });
+
+  socket.on("create_room", function(roomId) {
+    if (rooms.findIndex(room => room.name === roomId) === -1) {
+      rooms.push({ name: roomId });
+      socket.join(roomId);
+      socket.emit("create_room_response", { status: "success", data: { room: roomId } });
+      io.sockets.emit("all_rooms", { status: "success", data: { rooms: rooms } });
+      console.log(user.name + " successfully created room: " + roomId);
+    } else {
+      socket.emit("create_room_response", {
+        status: "error",
+        data: { message: "There is already a room with that name." }
+      });
+      console.log(user.name + " entered a duplicate room name: " + roomId);
+    }
+  });
+
   socket.on("add_user", function(username) {
     user = {
       name: username,
       room: null,
       socketId: socket.id
     };
-    if (users.findIndex(item => item.name === username) === -1) {
+    if (users.findIndex(user => user.name === username) === -1) {
       users.push(user);
       socket.emit("add_user_response", { status: "success", data: { user: user } });
       io.sockets.emit("connected_users", users);
+      io.sockets.emit("all_rooms", { status: "success", data: { rooms: rooms } });
       console.log(username + " connected");
     } else {
       socket.emit("add_user_response", {
