@@ -11,9 +11,9 @@ export const emit = (key, value) => {
 export const receive = event => {
   return new Promise(resolve => {
     socket.on(event, msg => {
-      resolve(msg)
+      resolve(msg);
     });
-  })  
+  });
 };
 
 // export const socketIO = {
