@@ -21,7 +21,7 @@ const UserLoginPage = ({ onGo }) => {
           setAlert("Error logging in. Please try again.");
       }
     });
-  }, [socket]);
+  }, [socket, onGo]);
 
   const validateUsername = e => {
     // CLIENT SIDE validation

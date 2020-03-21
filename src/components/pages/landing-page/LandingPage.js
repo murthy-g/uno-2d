@@ -10,8 +10,9 @@ const LandingPage = () => {
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
-    socket.on("connected_users", data => {
-      setUsers(data);
+    socket.on("connected_users", ({ status, data }) => {
+      const { users } = data;
+      setUsers(users);
     });
 
     socket.on("all_rooms", ({ status, data }) => {

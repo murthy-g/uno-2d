@@ -23,12 +23,27 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
           setRoomAlert("Error creating a room. Try again.");
       }
     });
-  });
 
-  const joinRoom = (id, name) => {
+    socket.on("join_room_response", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          const { roomId, roomName } = data;
+          history.push({
+            pathname: "/room",
+            search: "?id=" + roomId,
+            state: { roomName: roomName, roomId: roomId }
+          });
+          break;
+        case "error":
+          break;
+        default:
+      }
+    });
+  }, [socket, history]);
+
+  const joinRoom = id => {
     socket.emit("join_room", id);
     // TODO: handle error
-    history.push({ pathname: "/room", search: "?id=" + id, state: { roomName: name } });
   };
 
   const createRoom = () => {
@@ -47,9 +62,10 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
             type="button"
             className="list-group-item list-group-item-action"
             id={room.id}
-            onClick={() => joinRoom(room.id, room.name)}
+            onClick={() => joinRoom(room.id)}
           >
             {room.name}
+            {/* <span className="badge badge-primary badge-pill">hi</span> */}
           </button>
         ))}
       </ul>
@@ -61,7 +77,7 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
       <h4>Connected Users</h4>
       <ul className="list-group">
         {users.map(user => (
-          <li className="list-group-item">{user.name} is connected</li>
+          <li className="list-group-item">{user} is connected</li>
         ))}
       </ul>
     </div>
