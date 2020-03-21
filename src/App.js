@@ -17,12 +17,10 @@ class App extends React.Component {
     return (
       <SocketContext.Provider value={socket}>
         <Router>
-          <div className="container">
-            <Route exact path="/" component={LandingPage} />
-            <Route path="/room" component={GameRoomPage} />
-            {/* <Route exact path="/user-login" render={() => <UserLoginPage socket={socket} />} />
+          <Route exact path="/" component={LandingPage} />
+          <Route path="/room" component={GameRoomPage} />
+          {/* <Route exact path="/user-login" render={() => <UserLoginPage socket={socket} />} />
                 <Route path="/rooms" render={() => <JoinCreateRoomPage socket={socket} />} /> */}
-          </div>
         </Router>
       </SocketContext.Provider>
     );

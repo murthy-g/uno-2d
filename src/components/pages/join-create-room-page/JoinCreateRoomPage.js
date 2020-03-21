@@ -27,11 +27,11 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
     socket.on("join_room_response", ({ status, data }) => {
       switch (status) {
         case "success":
-          const { roomId, roomName } = data;
+          const { user, isAdmin, roomId, roomName } = data;
           history.push({
             pathname: "/room",
             search: "?id=" + roomId,
-            state: { roomName: roomName, roomId: roomId }
+            state: { user: user, isAdmin: isAdmin, roomName: roomName, roomId: roomId }
           });
           break;
         case "error":
@@ -60,12 +60,12 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
         {rooms.map(room => (
           <button
             type="button"
-            className="list-group-item list-group-item-action"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
             id={room.id}
             onClick={() => joinRoom(room.id)}
           >
             {room.name}
-            {/* <span className="badge badge-primary badge-pill">hi</span> */}
+            <span className="badge badge-primary badge-pill">{"Admin: " + room.adminUser}</span>
           </button>
         ))}
       </ul>

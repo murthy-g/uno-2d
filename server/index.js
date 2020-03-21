@@ -4,25 +4,65 @@ var io = require("socket.io")(http);
 var bodyParser = require("body-parser");
 const routes = require("./api");
 const connect = require("./components/connect");
-const shortid = require("shortid");
+// const shortid = require("shortid");
 
 app.set("json spaces", 2);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api", routes);
 
+/**
+ * usersInfo = {
+ *  "John": {
+ *    name: "John",
+ *    adminOf: "an-example-room",
+ *    currentRoom: "an-example-room"
+ *  },
+ *  "Mary": {
+ *    name: "Mary",
+ *    adminOf: null,
+ *    currentRoom: "an-example-room"
+ *  }
+ * }
+ */
 let usersInfo = {};
+
+/**
+ * roomsInfo = {
+ *  "an-example-room": {
+ *     id: "an-example-room",
+ *     name: "an example room",
+ *     adminUser: "John",
+ *     currentUsers: ["John", "Mary", "Sue"]
+ *   }
+ * }
+ */
 let roomsInfo = {};
-let listOfUsers = []; // contains only username strings
+
+/**
+ * listOfUsers = ["John", "Mary", "Sue"]
+ */
+let listOfUsers = [];
+
+/**
+ * listOfRooms = [
+ *  {
+ *    id: "an-example-room",
+ *    name: "an example room"
+ *   }
+ * ]
+ */
 let listOfRooms = [];
 
 io.on("connection", function(socket) {
   let user = {
     name: null,
-    currentRoom: null
+    currentRoom: null,
+    adminOf: null
   };
   let room = {
     id: null,
     name: null,
+    adminUser: null,
     currentUsers: []
   };
 
@@ -34,7 +74,12 @@ io.on("connection", function(socket) {
     // to client-sender only
     socket.emit("join_room_response", {
       status: "success",
-      data: { roomId: roomsInfo[roomId].id, roomName: roomsInfo[roomId].name }
+      data: {
+        user: user.name,
+        isAdmin: roomsInfo[roomId].adminUser === user.name,
+        roomId: roomsInfo[roomId].id,
+        roomName: roomsInfo[roomId].name
+      }
     });
 
     // broadcast newly joined user to existing room's users
@@ -54,10 +99,13 @@ io.on("connection", function(socket) {
     if (!roomsInfo[cleanString]) {
       room.id = cleanString;
       room.name = roomName;
+      room.adminUser = user.name;
 
       roomsInfo[room.id] = room;
       listOfRooms.push(room);
-      // socket.join(room.id);
+
+      user.adminOf = room.id;
+
       socket.emit("create_room_response", { status: "success", data: { room: room } });
       io.sockets.emit("all_rooms", { status: "success", data: { rooms: listOfRooms } });
       console.log(user.name + " successfully created room: " + roomName);
@@ -68,6 +116,11 @@ io.on("connection", function(socket) {
       });
       console.log(user.name + " entered a duplicate room name: " + roomName);
     }
+  });
+
+  socket.on("delete_room", function(username, roomId) {
+    // TODO: kick all users out
+    delete roomsInfo[roomId];
   });
 
   socket.on("add_user", function(username) {
