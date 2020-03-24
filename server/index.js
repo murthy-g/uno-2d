@@ -52,6 +52,16 @@ io.on("connection", function(socket) {
     }
   });
 
+  socket.on("cards", function(user) {
+    console.log(user)
+    const usr = {
+      name: user.name,
+      room: user.room,
+      socketId: user.socketId,
+      cards: user.cards
+    };
+    socket.emit("add_user_response", { status: "success", data: { user: usr } });
+  });
   socket.on("add_user", function(username) {
     user = {
       name: username,

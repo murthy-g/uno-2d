@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React, { createRef, useContext } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { Card } from "../card";
 import { mapCoordinateToCard, getRandomInt } from "../../utilities";
@@ -17,6 +17,7 @@ class BaseScene extends React.Component {
     };
     this.cardRef = createRef(); // number of cards per hand
     this.playerRef = createRef(); // number of players
+    // console.log(this.props.socket);
   }
 
   componentDidMount = () => {
@@ -25,16 +26,24 @@ class BaseScene extends React.Component {
 
   generateCards = () => {
     let storeCards = [];
-    const totalNumberOfCards = this.playerRef.current.value * this.cardRef.current.value;
-
+    const totalNumberOfCards = this.cardRef.current.value;
+    const users = this.props.history.users;
+    // console.log(users);
     // only add unique cards
-    while (storeCards.length < totalNumberOfCards) {
+    users.forEach(user => {
+      while (storeCards.length < totalNumberOfCards) {
       const randInt = getRandomInt(0, ALL_CARD_NAMES.length - 1);
       const randCardName = ALL_CARD_NAMES[randInt];
       if (!storeCards.includes(randCardName)) {
         storeCards.push(randCardName);
       }
-    }
+      }
+      user.cards = storeCards;
+      this.props.socket.emit("cards", user);
+      this.props.socket.on("add_user_response", function(user) {
+        console.log(user.data.user.cards);
+      });
+    });
 
     this.setState({
       saveCards: storeCards,
@@ -74,9 +83,16 @@ class BaseScene extends React.Component {
 
   render = () => (
     <div>
-      Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
-      Enter Number of Players: <input type="text" id="players" ref={this.playerRef} />
-      <button onClick={this.generateCards}>Generate</button>
+      {this.props.history &&
+        this.props.history.users &&
+        this.props.history.users[this.props.history.users.length - 1].name.toLowerCase() ===
+          "admin" && (
+          <div>
+            Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
+            Enter Number of Players: <input type="text" id="players" ref={this.playerRef} />
+            <button onClick={this.generateCards}>Generate</button>
+          </div>
+        )}
       <br />
       <DragDropContext onDragEnd={this.onDragEnd}>
         <YourRegion yourCards={this.state.saveCards} allCards={this.storeCards}></YourRegion>

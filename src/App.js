@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import { LandingPage, UserLoginPage, JoinCreateRoomPage, GameRoomPage } from "./components/pages";
+import { LandingPage, GameRoomPage } from "./components/pages";
 import SocketContext from "./shared/context/SocketContext";
 import io from "socket.io-client";
 import "./App.scss";
