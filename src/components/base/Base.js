@@ -9,26 +9,23 @@ class BaseScene extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
-    this.players = 0;
-    this.playCards = 0;
     this.storeCards = [];
     this.state = {
       saveCards: []
     };
     this.cardRef = createRef(); // number of cards per hand
-    this.playerRef = createRef(); // number of players
   }
 
   componentDidMount = () => {
     this.generateCssBackgroundSize();
+    this.props.socket.on("num_cards_dealt", ({ status, data }) => {
+      this.dealCards(data.number);
+    });
   };
 
-  generateCards = () => {
+  dealCards = number => {
     let storeCards = [];
-    const totalNumberOfCards = this.playerRef.current.value * this.cardRef.current.value;
-
-    // only add unique cards
-    while (storeCards.length < totalNumberOfCards) {
+    while (storeCards.length < number) {
       const randInt = getRandomInt(0, ALL_CARD_NAMES.length - 1);
       const randCardName = ALL_CARD_NAMES[randInt];
       if (!storeCards.includes(randCardName)) {
@@ -37,9 +34,13 @@ class BaseScene extends React.Component {
     }
 
     this.setState({
-      saveCards: storeCards,
-      playCards: this.cardRef.current.value
+      saveCards: storeCards
+      // playCards: this.cardRef.current.value
     });
+  };
+
+  generateCards = () => {
+    this.props.socket.emit("deal_cards", this.cardRef.current.value);
   };
 
   generateCssBackgroundSize = () => {
@@ -74,9 +75,12 @@ class BaseScene extends React.Component {
 
   render = () => (
     <div>
-      Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
-      Enter Number of Players: <input type="text" id="players" ref={this.playerRef} />
-      <button onClick={this.generateCards}>Generate</button>
+      {this.props.isAdmin && (
+        <div>
+          Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
+          <button onClick={this.generateCards}>Generate</button>
+        </div>
+      )}
       <br />
       <DragDropContext onDragEnd={this.onDragEnd}>
         <YourRegion yourCards={this.state.saveCards} allCards={this.storeCards}></YourRegion>

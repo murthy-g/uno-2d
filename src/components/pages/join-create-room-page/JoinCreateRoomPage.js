@@ -53,8 +53,8 @@ const JoinCreateRoomPage = () => {
         case "success":
           history.push({
             pathname: "/room",
-            search: "?id=" + data.roomId
-            // state: data
+            search: "?id=" + data.roomId,
+            state: { username: data.username }
           });
           break;
         case "error":

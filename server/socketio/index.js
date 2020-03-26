@@ -5,12 +5,14 @@ sockets.init = function(server) {
   var Room = require("./handlers/room");
   var User = require("./handlers/user");
   var Reserved = require("./handlers/reserved");
+  var Game = require("./handlers/game");
 
   io.sockets.on("connection", function(socket) {
     var eventHandlers = {
       reserved: new Reserved(socket, io),
       chat: new Room(socket, io),
-      user: new User(socket, io)
+      user: new User(socket, io),
+      game: new Game(socket, io)
     };
 
     // Bind events to handlers
@@ -20,30 +22,6 @@ sockets.init = function(server) {
         socket.on(event, handler[event]);
       }
     }
-
-    //   socket.on("join_room", function(roomId) {
-    //     socket.join(roomId);
-    //     usersInfo[user.name].currentRoom = roomId;
-    //     roomsInfo[roomId].currentUsers.push(user.name);
-
-    //     // to client-sender only
-    //     socket.emit("join_room_response", {
-    //       status: "success",
-    //       data: {
-    //         user: user.name,
-    //         isAdmin: roomsInfo[roomId].adminUser === user.name,
-    //         roomId: roomsInfo[roomId].id,
-    //         roomName: roomsInfo[roomId].name
-    //       }
-    //     });
-
-    //     // broadcast newly joined user to existing room's users
-    //     io.to(roomId).emit("gameroom_users", {
-    //       status: "success",
-    //       data: { users: roomsInfo[roomId].currentUsers }
-    //     });
-    //     console.log(user.name + " successfully joined room: " + roomId);
-    //   });
 
     //   socket.on("delete_room", function(username, roomId) {
     //     // TODO: kick all users out

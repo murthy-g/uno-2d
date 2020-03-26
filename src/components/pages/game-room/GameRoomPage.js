@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import SocketContext from "../../../shared/context/SocketContext";
+import BaseScene from "../../base/Base";
 
 const parseUrl = url => url.split("?id=")[1];
 
 const GameRoomPage = ({ history }) => {
   const [roomName, setRoomName] = useState(null);
   const [players, setPlayers] = useState([]);
-  // const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState(null);
   const socket = useContext(SocketContext);
 
   useEffect(() => {
@@ -14,6 +15,7 @@ const GameRoomPage = ({ history }) => {
       switch (status) {
         case "success":
           setRoomName(data.room.name);
+          setAdmin(data.room.adminUser);
           setPlayers(data.room.currentUsers);
           break;
         case "error":
@@ -35,15 +37,19 @@ const GameRoomPage = ({ history }) => {
           <h4>{roomName}</h4>
         </div>
         <div className="col-2">
-          {/* {history.location.state.isAdmin ? (
+          {history.location.state.username === admin ? (
             <button type="button" className="btn btn-outline-danger btn-sm">
               Delete Room
             </button>
-          ) : null} */}
+          ) : null}
         </div>
       </div>
-      {/* <div>I am: {history.location.state.user}</div> */}
-
+      <div>I am: {history.location.state.username}</div>
+      <BaseScene
+        players={players}
+        isAdmin={history.location.state.username === admin}
+        socket={socket}
+      />
       <h5>Players in this room:</h5>
       <ul className="list-group">
         {players.map(player => (

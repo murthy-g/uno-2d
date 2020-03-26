@@ -78,7 +78,7 @@ function join_room(roomId) {
     (error, document) => {
       this.socket.emit("join_room_response", {
         status: "success",
-        data: { roomId: document.id, roomName: document.name, adminUser: document.adminUser }
+        data: { roomId: document.id, username: this.socket.handshake.username }
       });
       this.socket.broadcast.to(roomId).emit("player_joined", {
         status: "success",
