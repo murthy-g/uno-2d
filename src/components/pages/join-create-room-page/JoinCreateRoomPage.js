@@ -2,11 +2,36 @@ import React, { useContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import SocketContext from "../../../shared/context/SocketContext";
 
-const JoinCreateRoomPage = ({ rooms, users }) => {
+const JoinCreateRoomPage = () => {
   const socket = useContext(SocketContext);
   const history = useHistory();
+  const [rooms, setRooms] = useState([]);
+  const [users, setUsers] = useState([]);
   const [roomInput, setRoomInput] = useState("");
   const [roomAlert, setRoomAlert] = useState(false);
+
+  useEffect(() => {
+    socket.emit("get_all_rooms", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setRooms(data.rooms);
+          break;
+        case "error":
+        default:
+      }
+    });
+
+    socket.emit("get_all_users", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          console.log(data.users);
+          setUsers(data.users);
+          break;
+        case "error":
+        default:
+      }
+    });
+  }, []);
 
   useEffect(() => {
     socket.on("create_room_response", ({ status, data }) => {
@@ -16,19 +41,52 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
           setRoomInput("");
           break;
         case "error":
-          const { message } = data;
-          setRoomAlert(message);
+          setRoomAlert(data.message);
           break;
         default:
           setRoomAlert("Error creating a room. Try again.");
       }
     });
-  });
 
-  const joinRoom = (id, name) => {
+    socket.on("join_room_response", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          history.push({
+            pathname: "/room",
+            search: "?id=" + data.roomId,
+            state: { username: data.username }
+          });
+          break;
+        case "error":
+          break;
+        default:
+      }
+    });
+
+    socket.on("new_room", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setRooms(rooms => rooms.concat(data.room));
+          break;
+        case "error":
+        default:
+      }
+    });
+
+    socket.on("new_user", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setUsers(users => users.concat(data.user));
+          break;
+        case "error":
+        default:
+      }
+    });
+  }, [socket]);
+
+  const joinRoom = id => {
     socket.emit("join_room", id);
     // TODO: handle error
-    history.push({ pathname: "/room", search: "?id=" + id, state: { roomName: name } });
   };
 
   const createRoom = () => {
@@ -45,11 +103,12 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
         {rooms.map(room => (
           <button
             type="button"
-            className="list-group-item list-group-item-action"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
             id={room.id}
-            onClick={() => joinRoom(room.id, room.name)}
+            onClick={() => joinRoom(room.id)}
           >
             {room.name}
+            <span className="badge badge-primary badge-pill">{"Admin: " + room.adminUser}</span>
           </button>
         ))}
       </ul>
@@ -68,7 +127,7 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
   );
 
   return (
-    <div>
+    <div className="container">
       {showListOfRooms()}
       <div className="input-group mb-3">
         <input

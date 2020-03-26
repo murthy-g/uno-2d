@@ -1,4 +1,4 @@
-import React, { createRef, useContext } from "react";
+import React, { createRef } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { Card } from "../card";
 import { mapCoordinateToCard, getRandomInt } from "../../utilities";
@@ -9,46 +9,38 @@ class BaseScene extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
-    this.players = 0;
-    this.playCards = 0;
     this.storeCards = [];
     this.state = {
       saveCards: []
     };
     this.cardRef = createRef(); // number of cards per hand
-    this.playerRef = createRef(); // number of players
-    // console.log(this.props.socket);
   }
 
   componentDidMount = () => {
     this.generateCssBackgroundSize();
+    this.props.socket.on("num_cards_dealt", ({ status, data }) => {
+      this.dealCards(data.number);
+    });
   };
 
-  generateCards = () => {
+  dealCards = number => {
     let storeCards = [];
-    const totalNumberOfCards = this.cardRef.current.value;
-    const users = this.props.history.users;
-    // console.log(users);
-    // only add unique cards
-    users.forEach(user => {
-      while (storeCards.length < totalNumberOfCards) {
+    while (storeCards.length < number) {
       const randInt = getRandomInt(0, ALL_CARD_NAMES.length - 1);
       const randCardName = ALL_CARD_NAMES[randInt];
       if (!storeCards.includes(randCardName)) {
         storeCards.push(randCardName);
       }
-      }
-      user.cards = storeCards;
-      this.props.socket.emit("cards", user);
-      this.props.socket.on("add_user_response", function(user) {
-        console.log(user.data.user.cards);
-      });
-    });
+    }
 
     this.setState({
-      saveCards: storeCards,
-      playCards: this.cardRef.current.value
+      saveCards: storeCards
+      // playCards: this.cardRef.current.value
     });
+  };
+
+  generateCards = () => {
+    this.props.socket.emit("deal_cards", this.cardRef.current.value);
   };
 
   generateCssBackgroundSize = () => {
@@ -83,16 +75,12 @@ class BaseScene extends React.Component {
 
   render = () => (
     <div>
-      {this.props.history &&
-        this.props.history.users &&
-        this.props.history.users[this.props.history.users.length - 1].name.toLowerCase() ===
-          "admin" && (
-          <div>
-            Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
-            Enter Number of Players: <input type="text" id="players" ref={this.playerRef} />
-            <button onClick={this.generateCards}>Generate</button>
-          </div>
-        )}
+      {this.props.isAdmin && (
+        <div>
+          Enter Number of Cards: <input type="text" id="cards" ref={this.cardRef} />
+          <button onClick={this.generateCards}>Generate</button>
+        </div>
+      )}
       <br />
       <DragDropContext onDragEnd={this.onDragEnd}>
         <YourRegion yourCards={this.state.saveCards} allCards={this.storeCards}></YourRegion>
