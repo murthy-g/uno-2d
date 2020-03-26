@@ -2,11 +2,36 @@ import React, { useContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import SocketContext from "../../../shared/context/SocketContext";
 
-const JoinCreateRoomPage = ({ rooms, users }) => {
+const JoinCreateRoomPage = () => {
   const socket = useContext(SocketContext);
   const history = useHistory();
+  const [rooms, setRooms] = useState([]);
+  const [users, setUsers] = useState([]);
   const [roomInput, setRoomInput] = useState("");
   const [roomAlert, setRoomAlert] = useState(false);
+
+  useEffect(() => {
+    socket.emit("get_all_rooms", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setRooms(data.rooms);
+          break;
+        case "error":
+        default:
+      }
+    });
+
+    socket.emit("get_all_users", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          console.log(data.users);
+          setUsers(data.users);
+          break;
+        case "error":
+        default:
+      }
+    });
+  }, []);
 
   useEffect(() => {
     socket.on("create_room_response", ({ status, data }) => {
@@ -16,8 +41,7 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
           setRoomInput("");
           break;
         case "error":
-          const { message } = data;
-          setRoomAlert(message);
+          setRoomAlert(data.message);
           break;
         default:
           setRoomAlert("Error creating a room. Try again.");
@@ -27,11 +51,10 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
     socket.on("join_room_response", ({ status, data }) => {
       switch (status) {
         case "success":
-          const { user, isAdmin, roomId, roomName } = data;
           history.push({
             pathname: "/room",
-            search: "?id=" + roomId,
-            state: { user: user, isAdmin: isAdmin, roomName: roomName, roomId: roomId }
+            search: "?id=" + data.roomId
+            // state: data
           });
           break;
         case "error":
@@ -39,7 +62,27 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
         default:
       }
     });
-  }, [socket, history]);
+
+    socket.on("new_room", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setRooms(rooms => rooms.concat(data.room));
+          break;
+        case "error":
+        default:
+      }
+    });
+
+    socket.on("new_user", ({ status, data }) => {
+      switch (status) {
+        case "success":
+          setUsers(users => users.concat(data.user));
+          break;
+        case "error":
+        default:
+      }
+    });
+  }, [socket]);
 
   const joinRoom = id => {
     socket.emit("join_room", id);
@@ -77,14 +120,14 @@ const JoinCreateRoomPage = ({ rooms, users }) => {
       <h4>Connected Users</h4>
       <ul className="list-group">
         {users.map(user => (
-          <li className="list-group-item">{user} is connected</li>
+          <li className="list-group-item">{user.name} is connected</li>
         ))}
       </ul>
     </div>
   );
 
   return (
-    <div>
+    <div className="container">
       {showListOfRooms()}
       <div className="input-group mb-3">
         <input

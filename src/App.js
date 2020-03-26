@@ -18,9 +18,9 @@ class App extends React.Component {
       <SocketContext.Provider value={socket}>
         <Router>
           <Route exact path="/" component={LandingPage} />
+          <Route path="/login" component={UserLoginPage} />
+          <Route path="/rooms" component={JoinCreateRoomPage} />
           <Route path="/room" component={GameRoomPage} />
-          {/* <Route exact path="/user-login" render={() => <UserLoginPage socket={socket} />} />
-                <Route path="/rooms" render={() => <JoinCreateRoomPage socket={socket} />} /> */}
         </Router>
       </SocketContext.Provider>
     );
