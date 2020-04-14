@@ -1,0 +1,18 @@
+body {
+  background-image: url(../../../assets/patterns/pixel_weave_@2X.png);
+}
+
+.logo {
+  width: 600px;
+  height: 400px;
+  background: url(../../../assets//logo.png);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -200px;
+  margin-left: -300px;
+
+  &:hover {
+    // TODO
+  }
+}
